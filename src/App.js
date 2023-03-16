@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import Signin from "./component/auth/Signin"
+import SignUp from "./component/auth/SignUp"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React, { useState, useEffect } from "react";
+import { auth } from "./firebase";
+import Home from "./component/Home";
+import { Box } from "@chakra-ui/react";
+
+
+
+const App = ()=> {
+  const [presentUser, setPresentUser] = useState(null)
+
+    useEffect(() => {
+      auth.onAuthStateChanged( user => {
+        if (user) {
+          setPresentUser({
+            uid:user?.uid,
+        email:user?.email
+          })
+        } else {
+          setPresentUser(null)
+        }
+      })
+    },[]);
+
+  return(
+  <Box p='10px' w='100%' h='100vh' bgGradient='linear(to-r, green.200, pink.500)' >
+    <center>
+      {presentUser ? <><Home presentUser={presentUser}/></> : <><Signin /> <br /><SignUp /></>}
+    </center>
+  </Box>
+  )
 }
-
-export default App;
+export default App
